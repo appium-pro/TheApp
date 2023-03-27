@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.theapp"
+    namespace "com.appiumpro"
     defaultConfig {
-        applicationId "com.theapp"
+        applicationId "com.appiumpro.the_app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
