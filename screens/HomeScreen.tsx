@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Platform, ScrollView} from 'react-native';
 import {ListItem} from '@rneui/base';
 import {Navigation} from 'react-native-navigation';
-import {testProps} from '../lib/utils';
+import {ScreenProps, testProps} from '../lib/utils';
 
 const viewList = [
   {
@@ -60,11 +60,7 @@ if (Platform.OS === 'android') {
   });
 }
 
-type HomeScreenProps = {
-  componentId: string;
-};
-
-export default function HomeScreen({componentId}: HomeScreenProps) {
+export default function HomeScreen({componentId}: ScreenProps) {
   return (
     <ScrollView>
       <View>
