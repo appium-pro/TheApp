@@ -6,6 +6,7 @@ import SecretScreen from './screens/SecretScreen.tsx';
 import ClipboardScreen from './screens/ClipboardScreen.tsx';
 import WebviewScreen from './screens/WebviewScreen.tsx';
 import DualWebviewScreen from './screens/DualWebviewScreen.tsx';
+import ListScreen from './screens/ListScreen.tsx';
 
 Navigation.registerComponent('HomeScreen', () => HomeScreen);
 Navigation.registerComponent('EchoScreen', () => EchoScreen);
@@ -14,6 +15,7 @@ Navigation.registerComponent('SecretScreen', () => SecretScreen);
 Navigation.registerComponent('ClipboardScreen', () => ClipboardScreen);
 Navigation.registerComponent('WebviewScreen', () => WebviewScreen);
 Navigation.registerComponent('DualWebviewScreen', () => DualWebviewScreen);
+Navigation.registerComponent('ListScreen', () => ListScreen);
 
 Navigation.events().registerAppLaunchedListener(async () => {
   Navigation.setRoot({
