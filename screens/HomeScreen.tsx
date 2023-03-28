@@ -23,12 +23,12 @@ const viewList = [
   {
     name: 'Webview Demo',
     desc: 'Explore the possibilities of hybrid apps',
-    screen: 'Hybrid',
+    screen: 'Webview',
   },
   {
     name: 'Dual Webview Demo',
     desc: 'Automate apps with multiple webviews',
-    screen: 'Hybrid2',
+    screen: 'DualWebview',
   },
   {
     name: 'List Demo',
