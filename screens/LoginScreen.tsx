@@ -1,7 +1,5 @@
-/** global alert */
-
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Input, Button, Text} from '@rneui/base';
 import {base as baseStyles} from '../lib/styles';
@@ -30,8 +28,7 @@ export default function EchoScreen({componentId}: ScreenProps) {
       return;
     }
 
-    // @ts-expect-error
-    alert('Invalid login credentials, please try again'); // eslint-disable-line no-alert
+    Alert.alert('Invalid login credentials, please try again');
   }
 
   return (

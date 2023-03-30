@@ -1,7 +1,5 @@
-/* global alert */
-
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Alert} from 'react-native';
 import WebView from 'react-native-webview';
 import {WebViewSource} from 'react-native-webview/lib/WebViewTypes';
 import {Input, Button} from '@rneui/base';
@@ -23,8 +21,7 @@ export default function WebviewScreen() {
   let source: WebViewSource = {html: initialHtml};
   if (url) {
     if (!/^https:\/\/appiumpro.com$/i.test(url)) {
-      // @ts-expect-error
-      alert('Sorry, you are not allowed to visit that url'); // eslint-disable-line no-alert
+      Alert.alert('Sorry, you are not allowed to visit that url');
     } else {
       source = {uri: url};
     }
