@@ -43,7 +43,7 @@ const viewList = [
   {
     name: 'Geolocation Demo',
     desc: 'See your current location',
-    screen: 'Location',
+    screen: 'Geolocation',
   },
   {
     name: 'Picker Demo',

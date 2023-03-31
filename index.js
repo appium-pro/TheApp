@@ -8,6 +8,7 @@ import WebviewScreen from './screens/WebviewScreen.tsx';
 import DualWebviewScreen from './screens/DualWebviewScreen.tsx';
 import ListScreen from './screens/ListScreen.tsx';
 import PhotoScreen from './screens/PhotoScreen.tsx';
+import GeolocationScreen from './screens/GeolocationScreen.tsx';
 
 Navigation.registerComponent('HomeScreen', () => HomeScreen);
 Navigation.registerComponent('EchoScreen', () => EchoScreen);
@@ -18,6 +19,7 @@ Navigation.registerComponent('WebviewScreen', () => WebviewScreen);
 Navigation.registerComponent('DualWebviewScreen', () => DualWebviewScreen);
 Navigation.registerComponent('ListScreen', () => ListScreen);
 Navigation.registerComponent('PhotoScreen', () => PhotoScreen);
+Navigation.registerComponent('GeolocationScreen', () => GeolocationScreen);
 
 Navigation.events().registerAppLaunchedListener(async () => {
   Navigation.setRoot({
