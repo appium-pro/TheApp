@@ -37,7 +37,7 @@ Note this is not how to build an `.ipa` file (that requires signing and provisio
 This just builds the `.app` which can be run on the simulator but with the JS bundle in it.
 
 ```
-npx react-native run-ios --configuration Release
+npx react-native run-ios --mode Release
 ```
 
 The `.app` will be put in the Derived Data path (right-click on the output in the Xcode file viewer
