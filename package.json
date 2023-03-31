@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ernestbies/react-native-android-sms-listener": "^1.0.2",
     "@react-native-async-storage/async-storage": "^1.18.0",
     "@react-native-clipboard/clipboard": "^1.11.2",
     "@react-native-picker/picker": "^2.4.9",
