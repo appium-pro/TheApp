@@ -51,7 +51,7 @@ export default function GeolocationScreen() {
   }
 
   const onErr = (err: any) => {
-    Alert.alert(err.message);
+    Alert.alert('Error', err.message);
   };
 
   useEffect(() => {

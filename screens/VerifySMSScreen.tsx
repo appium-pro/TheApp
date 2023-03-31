@@ -33,7 +33,7 @@ export default function VerifySMSScreen() {
 
   useEffect(() => {
     let smsListener: CancellableSubscription = {};
-    requestReadSmsPermission().catch(Alert.alert);
+    requestReadSmsPermission().catch((err: any) => Alert.alert('Error', err));
     smsListener = SMSListener.addListener((message: SMSMessage) => {
       if (new RegExp(CODE).test(message.body)) {
         setIsVerified(true);

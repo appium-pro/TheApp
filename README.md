@@ -31,6 +31,18 @@ npx react-native run-ios
 npx react-native run-android --appId=com.appiumpro.the_app --main-activity=com.appiumpro.the_app.MainActivity
 ```
 
+### Build the iOS app in release mode
+
+Note this is not how to build an `.ipa` file (that requires signing and provisioning profiles).
+This just builds the `.app` which can be run on the simulator but with the JS bundle in it.
+
+```
+npx react-native run-ios --configuration Release
+```
+
+The `.app` will be put in the Derived Data path (right-click on the output in the Xcode file viewer
+and you will be able to view it in the Finder).
+
 ### Build the Android apk for release
 
 ```

@@ -28,7 +28,7 @@ export default function EchoScreen({componentId}: ScreenProps) {
       return;
     }
 
-    Alert.alert('Invalid login credentials, please try again');
+    Alert.alert(null, 'Invalid login credentials, please try again');
   }
 
   return (
