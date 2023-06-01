@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HEADSPIN_API_TOKEN: ${{ secrets.HEADSPIN_API_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -34,9 +36,7 @@ jobs:
         run: |
              cd ./android
              ./gradlew assembleDebug             
-      - name: Upload application
-        uses: actions/upload-artifact@v2
-        with:
-          name: app
-          path: ./android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 3
+      - name: Upload application to HeadSpin
+        run: |
+          cp ./android/app/build/outputs/apk/debug/app-debug.apk ./TheApp.apk
+          curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@TheApp.apk"
