@@ -1,7 +1,7 @@
 import {Platform} from '../caps';
 import {Browser} from 'webdriverio';
 
-interface AugmentedBrowser extends Browser {
+export interface AugmentedBrowser extends Browser {
   viewStack?: BaseView[];
 }
 

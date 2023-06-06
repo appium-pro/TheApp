@@ -19,6 +19,18 @@ const LOCAL_ANDROID_APK = path.resolve(
   'app-debug.apk',
 );
 
+const LOCAL_IOS_APP = path.resolve(
+  __dirname,
+  '..',
+  'ios',
+  'DerivedData',
+  'TheApp',
+  'Build',
+  'Products',
+  'Release-iphonesimulator',
+  'TheApp.app',
+);
+
 if (!process.env.IOS && !process.env.ANDROID) {
   throw new Error('Must specify IOS or ANDROID in env');
 }
@@ -81,6 +93,9 @@ const LOCAL_BASE_CAPS = {};
 const LOCAL_IOS_CAPS = {
   ...LOCAL_BASE_CAPS,
   ...IOS_BASE_CAPS,
+  'appium:platformVersion': '16.2',
+  'appium:deviceName': 'iPhone 13',
+  'appium:app': LOCAL_IOS_APP,
 };
 
 const LOCAL_ANDROID_CAPS = {
