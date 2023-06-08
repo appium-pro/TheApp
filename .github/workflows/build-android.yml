@@ -42,5 +42,5 @@ jobs:
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
       - name: Run Appium Tests
         run: |
-          export HEADSPIN_APP_ID={{ env.APP_ID }}
+          export HEADSPIN_APP_ID="${{ env.APP_ID }}"
           DEBUG=1 HEADSPIN=1 ANDROID=1 REAL_DEVICE=1 npm test
