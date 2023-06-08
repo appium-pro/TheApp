@@ -39,4 +39,10 @@ jobs:
       - name: Upload application to HeadSpin
         run: |
           cp ./android/app/build/outputs/apk/debug/app-debug.apk ./TheApp.apk
-          curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@TheApp.apk"
+          export APP_ID=$(curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@TheApp.apk" | jq -r .app_id)
+          echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
+      - name: Run Appium Tests
+        run: |
+          export APP_ID="{{ env.APP_ID }}"
+          HEADSPIN=1 ANDROID=1 REAL_DEVICE=1 npm test
+

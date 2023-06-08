@@ -9,7 +9,7 @@ import {
 } from './caps';
 import {HomeView} from './views/HomeView';
 
-interface HarnessObj {
+export interface HarnessObj {
   driver: Browser;
   home: HomeView;
 }

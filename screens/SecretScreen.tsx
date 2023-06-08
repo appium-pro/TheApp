@@ -3,7 +3,13 @@ import {View, StyleSheet} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 import {Button, Text} from '@rneui/base';
 import {base as baseStyles} from '../lib/styles';
-import {testProps, getLoginUser, logout, ScreenProps} from '../lib/utils';
+import {
+  testProps,
+  getLoginUser,
+  logout,
+  ScreenProps,
+  navigate,
+} from '../lib/utils';
 
 export default function SecretScreen({componentId}: ScreenProps) {
   const [user, setUser] = useState('');
@@ -22,7 +28,7 @@ export default function SecretScreen({componentId}: ScreenProps) {
 
   async function doLogout() {
     await logout();
-    Navigation.pop(componentId);
+    navigate(componentId, 'LoginScreen');
   }
 
   return (

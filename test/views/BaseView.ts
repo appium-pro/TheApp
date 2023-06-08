@@ -25,6 +25,8 @@ export class BaseView {
   S_IOS: Record<string, string> | null = null;
   S_ANDROID: Record<string, string> | null = null;
 
+  viewVerificationSelectors: string[] | null = null;
+
   constructor(
     driver: Browser,
     platform: Platform = PLATFORM,
@@ -55,6 +57,20 @@ export class BaseView {
       return this.S;
     }
     throw new Error(`Cannot find selectors defined for ${this.platform}`);
+  }
+
+  async verify(wait?: WaitTimeout) {
+    if (!this.viewVerificationSelectors) {
+      throw new Error("Can't verify view without viewVerificationSelector");
+    }
+    for (const selectorName of this.viewVerificationSelectors) {
+      const selector = this.$[selectorName];
+      debug.log(`Verifying view with selector ${selectorName} (${selector})`);
+      if (!selector) {
+        throw new Error(`Selector '${selector}' was not in this.$`);
+      }
+      await this.find(selector, wait);
+    }
   }
 
   async back() {
