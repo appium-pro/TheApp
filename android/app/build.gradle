@@ -98,8 +98,8 @@ android {
         applicationId "com.appiumpro.the_app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.11.0"
+        versionCode 3
+        versionName "1.11.1"
     }
 
     splits {
