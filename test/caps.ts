@@ -1,10 +1,13 @@
-import type {RemoteOptions} from 'webdriverio';
-import {remote} from 'webdriverio';
 import path from 'path';
 
 export enum Platform {
   IOS,
   ANDROID,
+}
+
+export enum Device {
+  REAL,
+  VIRTUAL,
 }
 
 const LOCAL_ANDROID_APK = path.resolve(
@@ -15,9 +18,11 @@ const LOCAL_ANDROID_APK = path.resolve(
   'build',
   'outputs',
   'apk',
-  'debug',
-  'app-debug.apk',
+  'release',
+  'app-release.apk',
 );
+
+export const ANDROID_PACKAGE_ID = 'com.appiumpro.the_app';
 
 const LOCAL_IOS_APP = path.resolve(
   __dirname,
@@ -31,18 +36,23 @@ const LOCAL_IOS_APP = path.resolve(
   'TheApp.app',
 );
 
+export const IOS_BUNDLE_ID = 'com.appiumpro.the_app';
+
 if (!process.env.IOS && !process.env.ANDROID) {
   throw new Error('Must specify IOS or ANDROID in env');
 }
 
 export const IS_IOS = process.env.IOS;
 export const IS_ANDROID = process.env.ANDROID;
+export const REAL_DEVICE = process.env.REAL_DEVICE;
+export const DEBUG = process.env.DEBUG;
 
 if (IS_IOS && IS_ANDROID) {
   throw new Error("Test can't be both IOS and ANDROID");
 }
 
 export const PLATFORM = IS_IOS ? Platform.IOS : Platform.ANDROID;
+export const DEVICE = REAL_DEVICE ? Device.REAL : Device.VIRTUAL;
 
 export const IS_HEADSPIN = process.env.HEADSPIN;
 export const HEADSPIN_API_TOKEN = process.env.HEADSPIN_API_TOKEN;
@@ -51,13 +61,13 @@ if (IS_HEADSPIN && !HEADSPIN_API_TOKEN) {
   throw new Error('Running on HeadSpin requires an API token set');
 }
 
-const LOCAL_SERVER_OPTS = {
+export const LOCAL_SERVER_OPTS = {
   hostname: '127.0.0.1',
   port: 4723,
   path: '/',
 };
 
-const HEADSPIN_SERVER_OPTS = {
+export const HEADSPIN_SERVER_OPTS = {
   hostname: 'appium-dev.headspin.io',
   port: 80,
   path: `/v0/${HEADSPIN_API_TOKEN}`,
@@ -72,6 +82,8 @@ const ANDROID_BASE_CAPS = {
 const IOS_BASE_CAPS = {
   platformName: 'iOS',
   'appium:automationName': 'XCUITest',
+  'appium:showXcodeLog': DEBUG ? true : undefined,
+  'appium:showIOSLog': DEBUG ? true : undefined,
 };
 
 const HEADSPIN_BASE_CAPS = {};
@@ -113,18 +125,4 @@ export function getCaps(): Record<string, any> {
     return LOCAL_IOS_CAPS;
   }
   return LOCAL_ANDROID_CAPS;
-}
-
-export async function startSession() {
-  const capabilities = getCaps();
-  const opts = IS_HEADSPIN ? HEADSPIN_SERVER_OPTS : LOCAL_SERVER_OPTS;
-
-  const wdioParams: RemoteOptions = {
-    ...opts,
-    connectionRetryCount: 0,
-    logLevel: 'silent',
-    capabilities,
-  };
-
-  return await remote(wdioParams);
 }

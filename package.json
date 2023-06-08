@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "mocha ./test/**/*.test.ts"
+    "test": "mocha ./test/**/*.test.ts",
+    "android-release": "cd android && ./gradlew bundleRelease && ./gradlew assembleRelease",
+    "ios-release": "react-native run-ios --configuration=Release"
   },
   "dependencies": {
     "@ernestbies/react-native-android-sms-listener": "^1.0.2",

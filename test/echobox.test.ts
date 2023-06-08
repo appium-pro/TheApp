@@ -1,22 +1,14 @@
-import type {Browser} from 'webdriverio';
-import {startSession, PLATFORM} from './caps';
 import {HomeView, View} from './views/HomeView';
 import expect from 'expect';
 import {EchoBoxView} from './views/EchoBoxView';
+import {testHarness} from './util';
 
 describe('Echo Box', () => {
-  let driver: Browser;
-  let home: HomeView;
   let echo: EchoBoxView;
-  beforeEach(async () => {
-    driver = await startSession();
-    home = new HomeView(PLATFORM, driver);
-    echo = await home.navToView(View.ECHO);
-  });
-  afterEach(async () => {
-    if (driver) {
-      await driver.deleteSession();
-    }
+  testHarness({
+    beforeFn: async (homeView: HomeView) => {
+      echo = await homeView.navToView(View.ECHO);
+    },
   });
   it('should start with nothing in the box', async () => {
     expect(await echo.getEchoText()).toBe('');
@@ -26,8 +18,8 @@ describe('Echo Box', () => {
     expect(await echo.getEchoText()).toBe('foo');
 
     // should stick around if we go to home page and back
-    home = await echo.back();
-    echo = await home.navToView(View.ECHO);
+    const home = await echo.back();
+    await home.navToView(View.ECHO);
     expect(await echo.getEchoText()).toBe('foo');
   });
 });
