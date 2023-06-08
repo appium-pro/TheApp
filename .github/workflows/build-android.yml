@@ -34,11 +34,10 @@ jobs:
           npm install
       - name: Build application
         run: |
-             cd ./android
-             ./gradlew assembleDebug
+          npm run android-release
       - name: Upload application to HeadSpin
         run: |
-          cp ./android/app/build/outputs/apk/debug/app-debug.apk ./TheApp.apk
+          cp ./android/app/build/outputs/apk/release/app-release.apk ./TheApp.apk
           export APP_ID=$(curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@TheApp.apk" | jq -r .app_id)
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
       - name: Run Appium Tests
