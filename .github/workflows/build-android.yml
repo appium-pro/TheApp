@@ -24,7 +24,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Setup Node  
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -35,7 +35,7 @@ jobs:
       - name: Build application
         run: |
              cd ./android
-             ./gradlew assembleDebug             
+             ./gradlew assembleDebug
       - name: Upload application to HeadSpin
         run: |
           cp ./android/app/build/outputs/apk/debug/app-debug.apk ./TheApp.apk
@@ -43,6 +43,5 @@ jobs:
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
       - name: Run Appium Tests
         run: |
-          export APP_ID="{{ env.APP_ID }}"
-          HEADSPIN=1 ANDROID=1 REAL_DEVICE=1 npm test
-
+          export HEADSPIN_APP_ID="{{ env.APP_ID }}"
+          DEBUG=1 HEADSPIN=1 ANDROID=1 REAL_DEVICE=1 npm test

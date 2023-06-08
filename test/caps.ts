@@ -38,27 +38,30 @@ const LOCAL_IOS_APP = path.resolve(
 
 export const IOS_BUNDLE_ID = 'com.appiumpro.the_app';
 
-if (!process.env.IOS && !process.env.ANDROID) {
-  throw new Error('Must specify IOS or ANDROID in env');
-}
-
 export const IS_IOS = process.env.IOS;
 export const IS_ANDROID = process.env.ANDROID;
-export const REAL_DEVICE = process.env.REAL_DEVICE;
+export const IS_HEADSPIN = process.env.HEADSPIN;
+export const HEADSPIN_API_TOKEN = process.env.HEADSPIN_API_TOKEN;
+export const HEADSPIN_APP_ID = process.env.HEADSPIN_APP_ID;
+export const REAL_DEVICE = process.env.REAL_DEVICE || IS_HEADSPIN;
 export const DEBUG = process.env.DEBUG;
+export const PLATFORM = IS_IOS ? Platform.IOS : Platform.ANDROID;
+export const DEVICE = REAL_DEVICE ? Device.REAL : Device.VIRTUAL;
+
+if (!IS_IOS && !IS_ANDROID) {
+  throw new Error('Must specify IOS or ANDROID in env');
+}
 
 if (IS_IOS && IS_ANDROID) {
   throw new Error("Test can't be both IOS and ANDROID");
 }
 
-export const PLATFORM = IS_IOS ? Platform.IOS : Platform.ANDROID;
-export const DEVICE = REAL_DEVICE ? Device.REAL : Device.VIRTUAL;
-
-export const IS_HEADSPIN = process.env.HEADSPIN;
-export const HEADSPIN_API_TOKEN = process.env.HEADSPIN_API_TOKEN;
-
 if (IS_HEADSPIN && !HEADSPIN_API_TOKEN) {
   throw new Error('Running on HeadSpin requires an API token set');
+}
+
+if (IS_HEADSPIN && !HEADSPIN_APP_ID) {
+  throw new Error('Running on HeadSpin requires HEADSPIN_APP_ID set');
 }
 
 export const LOCAL_SERVER_OPTS = {
@@ -69,9 +72,9 @@ export const LOCAL_SERVER_OPTS = {
 
 export const HEADSPIN_SERVER_OPTS = {
   hostname: 'appium-dev.headspin.io',
-  port: 80,
-  path: `/v0/${HEADSPIN_API_TOKEN}`,
-  https: true,
+  port: 443,
+  path: `/v0/${HEADSPIN_API_TOKEN}/wd/hub`,
+  protocol: 'https',
 };
 
 const ANDROID_BASE_CAPS = {
@@ -86,18 +89,26 @@ const IOS_BASE_CAPS = {
   'appium:showIOSLog': DEBUG ? true : undefined,
 };
 
-const HEADSPIN_BASE_CAPS = {};
+const HEADSPIN_BASE_CAPS = {
+  'headspin:app.id': HEADSPIN_APP_ID,
+  'headspin:capture.video': true,
+};
 
 const HEADSPIN_IOS_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...IOS_BASE_CAPS,
-  'headspin:selector': '',
+  'headspin:selector': {
+    os: 'ios',
+    os_version: '14',
+  },
 };
 
 const HEADSPIN_ANDROID_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...ANDROID_BASE_CAPS,
-  'headspin:selector': '',
+  'headspin:selector': {
+    sku: 'Pixel 4 XL',
+  },
 };
 
 const LOCAL_BASE_CAPS = {};
