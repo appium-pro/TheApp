@@ -3,6 +3,7 @@ import {IOS_BUNDLE_ID, Platform, Device, PLATFORM, DEVICE} from '../caps';
 import {Browser} from 'webdriverio';
 import {ANDROID_PACKAGE_ID} from '../caps';
 import {debug} from '../util';
+import {Size} from 'webdriverio/build/commands/element';
 
 export interface AugmentedBrowser extends Browser {
   viewStack?: BaseView[];
@@ -14,16 +15,26 @@ export enum Wait {
   LONG = 20000,
 }
 
+export enum ScrollDirection {
+  DOWN,
+  UP,
+}
+
 export type WaitTimeout = Wait | number;
+
+export type SelectorMap = Record<string, string | ((x: string) => string)>;
+export type StringSelectorMap = Record<string, string>;
+export type FunctionSelectorMap = Record<string, (x: string) => string>;
 
 export class BaseView {
   platform: Platform;
   driver: AugmentedBrowser;
   device: Device;
+  size: Size | null = null;
 
-  S: Record<string, string> | null = null;
-  S_IOS: Record<string, string> | null = null;
-  S_ANDROID: Record<string, string> | null = null;
+  S: SelectorMap | null = null;
+  S_IOS: SelectorMap | null = null;
+  S_ANDROID: SelectorMap | null = null;
 
   viewVerificationSelectors: string[] | null = null;
 
@@ -46,7 +57,7 @@ export class BaseView {
     }
   }
 
-  get $() {
+  get #$(): SelectorMap {
     if (this.platform === Platform.IOS && this.S_IOS) {
       return this.S_IOS;
     }
@@ -57,6 +68,30 @@ export class BaseView {
       return this.S;
     }
     throw new Error(`Cannot find selectors defined for ${this.platform}`);
+  }
+
+  get $() {
+    const s = this.#$;
+    const stringSelectors: StringSelectorMap = {};
+    for (const key of Object.keys(s)) {
+      const val = s[key];
+      if (typeof val === 'string') {
+        stringSelectors[key] = val;
+      }
+    }
+    return stringSelectors;
+  }
+
+  get $f() {
+    const s = this.#$;
+    const functionSelectors: FunctionSelectorMap = {};
+    for (const key of Object.keys(s)) {
+      const val = s[key];
+      if (typeof val !== 'string') {
+        functionSelectors[key] = val;
+      }
+    }
+    return functionSelectors;
   }
 
   async verify(wait?: WaitTimeout) {
@@ -172,6 +207,41 @@ export class BaseView {
   async sleep(ms: number) {
     debug.log(`sleep(${ms})`);
     await B.delay(ms);
+  }
+
+  async scroll(direction: ScrollDirection) {
+    const {width, height} = await this.getSize();
+    const topHeight = height * 0.1;
+    const bottomHeight = height * 0.9;
+    const startY =
+      direction === ScrollDirection.DOWN ? bottomHeight : topHeight;
+    const endY = direction === ScrollDirection.DOWN ? topHeight : bottomHeight;
+    const start = {x: width / 2, y: startY};
+    const end = {x: start.x, y: endY};
+    try {
+      return await this.driver
+        .action('pointer')
+        .move({duration: 0, origin: 'viewport', ...start})
+        .down()
+        .move({duration: 1000, origin: 'viewport', ...end})
+        .up()
+        .perform();
+    } catch (err) {
+      // ignore any android errors here for now since uiauto2 driver does not implement DELETE
+      // /actions, neither do some older versions of the xcuitest driver
+    }
+  }
+
+  async scrollDown() {
+    return await this.scroll(ScrollDirection.DOWN);
+  }
+
+  async getSize(forceRefresh: boolean = false) {
+    if (!this.size || forceRefresh) {
+      const {width, height} = await this.driver.getWindowRect();
+      this.size = {width, height};
+    }
+    return this.size;
   }
 
   static from<T extends typeof BaseView>(this: T, otherView: BaseView) {

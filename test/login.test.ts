@@ -1,7 +1,5 @@
 import expect from 'expect';
 import {HarnessObj, testHarness} from './util';
-import {View} from './views/HomeView';
-import {LoginView} from './views/LoginView';
 import {SecretView} from './views/SecretView';
 
 const USER = 'alice';
@@ -26,13 +24,13 @@ describe('Login to Secret Area', () => {
     const harness = testHarness();
     it('should log in with correct username and password', async () => {
       const {home} = harness;
-      const loginScreen = (await home.navToView(View.LOGIN)) as LoginView;
+      const loginScreen = await home.navToLogin();
       const secret = await loginScreen.login(USER, PW);
       expect(await secret.getLoggedInUser()).toEqual(USER);
     });
     it('should fail to log in with bad username or password', async () => {
       const {home} = harness;
-      const loginScreen = (await home.navToView(View.LOGIN)) as LoginView;
+      const loginScreen = await home.navToLogin();
       await loginScreen.login(BAD_USER, BAD_PW);
       await loginScreen.handleInvalidLoginAlert();
     });

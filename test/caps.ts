@@ -107,10 +107,8 @@ const HEADSPIN_IOS_CAPS = {
 const HEADSPIN_ANDROID_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...ANDROID_BASE_CAPS,
-  'headspin:selector': {
-    sku: 'Pixel 4 XL',
-    geo: 'Palo Alto',
-  },
+  'headspin:selector':
+    'device_type:android geos:"Palo Alto, US",geos:"Mountain View, US" device_skus:"Pixel 4",device_skus:"Galaxy S23"',
 };
 
 const LOCAL_BASE_CAPS = {};

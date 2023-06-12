@@ -1,4 +1,4 @@
-import {HomeView, View} from './views/HomeView';
+import {HomeView} from './views/HomeView';
 import expect from 'expect';
 import {EchoBoxView} from './views/EchoBoxView';
 import {testHarness} from './util';
@@ -7,7 +7,7 @@ describe('Echo Box', () => {
   let echo: EchoBoxView;
   testHarness({
     beforeFn: async (homeView: HomeView) => {
-      echo = await homeView.navToView(View.ECHO);
+      echo = await homeView.navToEchoBox();
     },
   });
   it('should start with nothing in the box', async () => {
@@ -19,7 +19,7 @@ describe('Echo Box', () => {
 
     // should stick around if we go to home page and back
     const home = await echo.back();
-    await home.navToView(View.ECHO);
+    await home.navToEchoBox();
     expect(await echo.getEchoText()).toBe('foo');
   });
 });
