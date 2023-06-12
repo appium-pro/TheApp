@@ -1,11 +1,13 @@
 import type {Browser, RemoteOptions} from 'webdriverio';
 import {remote} from 'webdriverio';
+import axios from 'axios';
 import {
   getCaps,
   IS_HEADSPIN,
   HEADSPIN_SERVER_OPTS,
   LOCAL_SERVER_OPTS,
   DEBUG,
+  HEADSPIN_API_TOKEN,
 } from './caps';
 import {HomeView} from './views/HomeView';
 
@@ -69,10 +71,19 @@ export function testHarness({beforeFn, noLaunch = false}: HarnessOpts = {}) {
       await beforeFn(obj.home);
     }
   });
-  afterEach(async () => {
+  afterEach(async function () {
     if (obj.driver) {
+      const sessionId = obj.driver.sessionId;
       debug.log('Deleting session');
       await obj.driver.deleteSession();
+      if (IS_HEADSPIN) {
+        const status = this.currentTest?.isPassed ? 'passed' : 'failed';
+        debug.log(`Reporting ${status} session status to HeadSpin`);
+        const reportingUrl = `https://${HEADSPIN_API_TOKEN}@api-dev.headspin.io/v0/perftests/upload`;
+        await axios.post(reportingUrl, {status, session_id: sessionId});
+        const webUrl = `https://ui-dev.headspin.io/sessions/${sessionId}/waterfall`;
+        debug.log(`HeadSpin web link: ${webUrl}`);
+      }
     }
   });
   return obj as HarnessObj; // we know the props will be on this but TS doesn't
