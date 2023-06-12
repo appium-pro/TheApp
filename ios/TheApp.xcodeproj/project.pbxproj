@@ -488,7 +488,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = V72KX8PA9J;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -574,7 +574,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = V72KX8PA9J;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",

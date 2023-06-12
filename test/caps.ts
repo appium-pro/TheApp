@@ -75,6 +75,7 @@ export const HEADSPIN_SERVER_OPTS = {
   port: 443,
   path: `/v0/${HEADSPIN_API_TOKEN}/wd/hub`,
   protocol: 'https',
+  connectionRetryTimeout: 300000,
 };
 
 const ANDROID_BASE_CAPS = {
@@ -85,22 +86,22 @@ const ANDROID_BASE_CAPS = {
 const IOS_BASE_CAPS = {
   platformName: 'iOS',
   'appium:automationName': 'XCUITest',
-  'appium:showXcodeLog': DEBUG ? true : undefined,
-  'appium:showIOSLog': DEBUG ? true : undefined,
+  'appium:showXcodeLog': DEBUG && !IS_HEADSPIN ? true : undefined,
+  'appium:showIOSLog': DEBUG && !IS_HEADSPIN ? true : undefined,
 };
 
 const HEADSPIN_BASE_CAPS = {
   'headspin:app.id': HEADSPIN_APP_ID,
   'headspin:capture.video': true,
+  'headspin:newCommandTimeout': 300,
+  'headspin:retryNewSessionFailure': false, // don't retry on different devices if a session fails
 };
 
 const HEADSPIN_IOS_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...IOS_BASE_CAPS,
-  'headspin:selector': {
-    os: 'ios',
-    os_version: '14',
-  },
+  'headspin:selector':
+    'device_type:ios geos:"Palo Alto, US"  device_skus:"iPhone XR"',
 };
 
 const HEADSPIN_ANDROID_CAPS = {
@@ -108,6 +109,7 @@ const HEADSPIN_ANDROID_CAPS = {
   ...ANDROID_BASE_CAPS,
   'headspin:selector': {
     sku: 'Pixel 4 XL',
+    geo: 'Palo Alto',
   },
 };
 

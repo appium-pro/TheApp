@@ -21,14 +21,22 @@ interface HarnessOpts {
 
 interface StartSessionOpts {
   noLaunch?: boolean;
+  testName: string;
 }
 
-export async function startSession({noLaunch = false}: StartSessionOpts) {
+export async function startSession({
+  noLaunch = false,
+  testName,
+}: StartSessionOpts) {
   const capabilities = getCaps();
   const opts = IS_HEADSPIN ? HEADSPIN_SERVER_OPTS : LOCAL_SERVER_OPTS;
 
   if (noLaunch) {
     delete capabilities['appium:app'];
+  }
+
+  if (IS_HEADSPIN) {
+    capabilities['headspin:testName'] = testName;
   }
 
   const wdioParams: RemoteOptions = {
@@ -50,9 +58,12 @@ export const debug = DEBUG ? console : silentConsole;
 
 export function testHarness({beforeFn, noLaunch = false}: HarnessOpts = {}) {
   const obj: Partial<HarnessObj> = {};
-  beforeEach(async () => {
+  beforeEach(async function () {
     debug.log('Starting Session');
-    obj.driver = await startSession({noLaunch});
+    obj.driver = await startSession({
+      noLaunch,
+      testName: this.currentTest?.fullTitle() || 'unnamed TheApp test',
+    });
     obj.home = new HomeView(obj.driver);
     if (beforeFn) {
       await beforeFn(obj.home);
