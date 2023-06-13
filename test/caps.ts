@@ -38,6 +38,7 @@ const LOCAL_IOS_APP = path.resolve(
 
 export const IOS_BUNDLE_ID = 'com.appiumpro.the_app';
 
+export const BUILD_ID = process.env.BUILD_ID;
 export const IS_IOS = process.env.IOS;
 export const IS_ANDROID = process.env.ANDROID;
 export const IS_HEADSPIN = process.env.HEADSPIN;

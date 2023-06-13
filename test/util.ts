@@ -7,6 +7,7 @@ import {
   HEADSPIN_SERVER_OPTS,
   LOCAL_SERVER_OPTS,
   DEBUG,
+  BUILD_ID,
   HEADSPIN_API_TOKEN,
 } from './caps';
 import {HomeView} from './views/HomeView';
@@ -39,6 +40,9 @@ export async function startSession({
 
   if (IS_HEADSPIN) {
     capabilities['headspin:testName'] = testName;
+    if (BUILD_ID) {
+      capabilities['headspin:sessionTags'] = [{build: BUILD_ID}];
+    }
   }
 
   const wdioParams: RemoteOptions = {

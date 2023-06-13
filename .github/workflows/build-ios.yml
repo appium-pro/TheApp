@@ -34,11 +34,15 @@ jobs:
       WORKSPACE: ${{ 'TheApp.xcworkspace' }}
       SCHEME: ${{ 'TheApp' }}
       CONFIGURATION: ${{ 'Release' }}
-      PRODUCT_PATH: ${{ 'DerivedData/TheApp/Build/Products/Release-iphoneos/TheApp.app' }}
+      PROJECT_DIR: ${{ 'ios' }}
+      DERIVED_DATA_DIR: ${{ 'DerivedData' }}
+      PRODUCT_PATH: ${{ 'DerivedData/Build/Products/Release-iphoneos/TheApp.app' }}
       DESTINATION: ${{ 'generic/platform=iOS' }}
-      DISTRIBUTION_CERTIFICATE: ${{ secrets.SIGNING_CERTIFICATE }}
-      CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+      CODE_SIGN_IDENTITY: ${{ secrets.CODE_SIGN_IDENTITY }}
+      SIGNING_CERTIFICATE: ${{ secrets.SIGNING_CERTIFICATE }}
+      SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
       PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
+      PROVISIONING_PROFILE_UUID: ${{ secrets.PROVISIONING_PROFILE_UUID }}
       KEYCHAIN_PWD: ${{ secrets.KEYCHAIN_PWD }}
     steps:
       - name: Checkout repository
@@ -51,13 +55,13 @@ jobs:
 
       - name: Keychain Setup
         run: |
-          CERT_PATH=$RUNNER_TEMP/dist_certificate.p12
-          PP_PATH=$RUNNER_TEMP/pp.mobileprovision
-          KCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          export CERT_PATH=$RUNNER_TEMP/dist_certificate.p12
+          export PP_PATH=$RUNNER_TEMP/pp.mobileprovision
+          export KCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           # import certificate and provisioning profile from secrets
-          echo -n "$SIGNING_CERTIFICATE" | base64 —-decode —-output $CERT_PATH
-          echo -n "$PROVISIONING_PROFILE" | base64 -—decode -—output $PP_PATH
+          echo -n $SIGNING_CERTIFICATE | base64 -D > $CERT_PATH
+          echo -n $PROVISIONING_PROFILE | base64 -D > $PP_PATH
 
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PWD" $KCHAIN_PATH
@@ -81,21 +85,34 @@ jobs:
 
       - name: Pod Install
         run: |
-          cd ios && pod install
+          cd $PROJECT_DIR && pod install
 
       - name: Build App
         run: |
-          cd ios
+          export KCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          security unlock-keychain -p "$KEYCHAIN_PWD" $KCHAIN_PATH
+          cd $PROJECT_DIR
           xcodebuild -workspace $WORKSPACE \
             -configuration $CONFIGURATION \
             -scheme $SCHEME \
             -destination $DESTINATION \
-            PROVISIONING_STYLE="Manual" PROVISIONING_PROFILE={$PROVISIONING_PROFILE} \
-            CODE_SIGN_STYLE="Manual" CODE_SIGN_IDENTITY={$SIGNING_CERTIFICATE}
+            -allowProvisioningUpdates \
+            -derivedDataPath $DERIVED_DATA_DIR \
+            OTHER_CODE_SIGN_FLAGS="--keychain=$KCHAIN_PATH" \
+            PROVISIONING_STYLE="Manual" \
+            PROVISIONING_PROFILE="$PROVISIONING_PROFILE_UUID" \
+            CODE_SIGN_STYLE="Manual" \
+            CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY"
 
       - name: Archive IPA
         run: |
-          cd ios
+          cd $PROJECT_DIR
+          ls -la ./DerivedData
+          ls -la ./DerivedData/Build
+          ls -la ./DerivedData/Build/Products
+          ls -la ./DerivedData/Build/Products/Release-iphoneos
+          ls -la ./DerivedData/Build/Products/Release-iphoneos/TheApp.app
           rm -rf Payload
           mkdir Payload
           cp -R $PRODUCT_PATH Payload/
@@ -109,6 +126,8 @@ jobs:
       - name: Run Appium Tests
         run: |
           export HEADSPIN_APP_ID="${{ env.APP_ID }}"
+          export GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
+          export BUILD_ID="$GITHUB_REF_NAME:$GIT_HASH"
           DEBUG=1 HEADSPIN=1 IOS=1 REAL_DEVICE=1 npm test
 
       - name: Clean Up Keys
