@@ -49,14 +49,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: NPM Install
-        run: |
-          npm install
-
-      - name: Pod Install
-        run: |
-          cd ios && pod install
-
       - name: Keychain Setup
         run: |
           CERT_PATH=$RUNNER_TEMP/dist_certificate.p12
@@ -64,8 +56,8 @@ jobs:
           KCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           # import certificate and provisioning profile from secrets
-          echo -n "$SIGNING_CERTIFICATE" | base64 —decode —output $CERT_PATH
-          echo -n "$PROVISIONING_PROFILE" | base64 —decode —output $PP_PATH
+          echo -n "$SIGNING_CERTIFICATE" | base64 —-decode —-output $CERT_PATH
+          echo -n "$PROVISIONING_PROFILE" | base64 -—decode -—output $PP_PATH
 
           # create temporary keychain
           security create-keychain -p "$KEYCHAIN_PWD" $KCHAIN_PATH
@@ -82,6 +74,14 @@ jobs:
 
       - name: Xcode Version
         run: /usr/bin/xcodebuild -version
+
+      - name: NPM Install
+        run: |
+          npm install
+
+      - name: Pod Install
+        run: |
+          cd ios && pod install
 
       - name: Build App
         run: |
@@ -101,7 +101,7 @@ jobs:
           cp -R $PRODUCT_PATH Payload/
           zip -r TheApp.ipa Payload/
 
-      - name: Upload application to HeadSpin
+      - name: Upload to HeadSpin
         run: |
           export APP_ID=$(curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@ios/TheApp.ipa" | jq -r .app_id)
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
@@ -110,3 +110,9 @@ jobs:
         run: |
           export HEADSPIN_APP_ID="${{ env.APP_ID }}"
           DEBUG=1 HEADSPIN=1 IOS=1 REAL_DEVICE=1 npm test
+
+      - name: Clean Up Keys
+        if: ${{ always() }}
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          rm -rf ~/Library/MobileDevice/Provisioning\ Profiles/pp.mobileprovision
