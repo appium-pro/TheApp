@@ -2,8 +2,36 @@ name: "Build Android"
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths-ignore:
+      - README.md
+      - .gitignore
+      - .editorconfig
+      - .eslintrc.js
+      - .node-version
+      - .prettierrc.js
+      - .ruby-version
+      - ios/**
+      - vendor/**
+      - Gemfile
+      - Gemfile.lock
+      - .github/workflows/build-ios.yml
+
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - README.md
+      - .gitignore
+      - .editorconfig
+      - .eslintrc.js
+      - .node-version
+      - .prettierrc.js
+      - .ruby-version
+      - ios/**
+      - vendor/**
+      - Gemfile
+      - Gemfile.lock
+      - .github/workflows/build-ios.yml
 
 jobs:
   build:

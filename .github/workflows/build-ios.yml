@@ -1,0 +1,112 @@
+name: "Build iOS"
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - README.md
+      - .gitignore
+      - .editorconfig
+      - .eslintrc.js
+      - .node-version
+      - .prettierrc.js
+      - .ruby-version
+      - android/**
+      - .github/workflows/build-android.yml
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - README.md
+      - .gitignore
+      - .editorconfig
+      - .eslintrc.js
+      - .node-version
+      - .prettierrc.js
+      - .ruby-version
+      - android/**
+      - .github/workflows/build-android.yml
+
+jobs:
+  build:
+    runs-on: macos-latest
+    env:
+      HEADSPIN_API_TOKEN: ${{ secrets.HEADSPIN_API_TOKEN }}
+      WORKSPACE: ${{ 'TheApp.xcworkspace' }}
+      SCHEME: ${{ 'TheApp' }}
+      CONFIGURATION: ${{ 'Release' }}
+      PRODUCT_PATH: ${{ 'DerivedData/TheApp/Build/Products/Release-iphoneos/TheApp.app' }}
+      DESTINATION: ${{ 'generic/platform=iOS' }}
+      DISTRIBUTION_CERTIFICATE: ${{ secrets.SIGNING_CERTIFICATE }}
+      CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+      PROVISIONING_PROFILE: ${{ secrets.PROVISIONING_PROFILE }}
+      KEYCHAIN_PWD: ${{ secrets.KEYCHAIN_PWD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: NPM Install
+        run: |
+          npm install
+
+      - name: Pod Install
+        run: |
+          cd ios && pod install
+
+      - name: Keychain Setup
+        run: |
+          CERT_PATH=$RUNNER_TEMP/dist_certificate.p12
+          PP_PATH=$RUNNER_TEMP/pp.mobileprovision
+          KCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # import certificate and provisioning profile from secrets
+          echo -n "$SIGNING_CERTIFICATE" | base64 —decode —output $CERT_PATH
+          echo -n "$PROVISIONING_PROFILE" | base64 —decode —output $PP_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PWD" $KCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PWD" $KCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERT_PATH -P "$SIGNING_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KCHAIN_PATH
+          security list-keychain -d user -s $KCHAIN_PATH
+
+          # apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+
+      - name: Xcode Version
+        run: /usr/bin/xcodebuild -version
+
+      - name: Build App
+        run: |
+          cd ios
+          xcodebuild -workspace $WORKSPACE \
+            -configuration $CONFIGURATION \
+            -scheme $SCHEME \
+            -destination $DESTINATION \
+            PROVISIONING_STYLE="Manual" PROVISIONING_PROFILE={$PROVISIONING_PROFILE} \
+            CODE_SIGN_STYLE="Manual" CODE_SIGN_IDENTITY={$SIGNING_CERTIFICATE}
+
+      - name: Archive IPA
+        run: |
+          cd ios
+          rm -rf Payload
+          mkdir Payload
+          cp -R $PRODUCT_PATH Payload/
+          zip -r TheApp.ipa Payload/
+
+      - name: Upload application to HeadSpin
+        run: |
+          export APP_ID=$(curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@ios/TheApp.ipa" | jq -r .app_id)
+          echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
+
+      - name: Run Appium Tests
+        run: |
+          export HEADSPIN_APP_ID="${{ env.APP_ID }}"
+          DEBUG=1 HEADSPIN=1 IOS=1 REAL_DEVICE=1 npm test
