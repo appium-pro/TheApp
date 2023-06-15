@@ -5,6 +5,8 @@ import {ANDROID_PACKAGE_ID} from '../caps';
 import {debug} from '../util';
 import {Size} from 'webdriverio/build/commands/element';
 
+const SAFARI_BUNDLE_ID = 'com.apple.mobilesafari';
+
 export interface AugmentedBrowser extends Browser {
   viewStack?: BaseView[];
 }
@@ -171,15 +173,21 @@ export class BaseView {
       return;
     }
 
-    // ios real device case
     if (this.device === Device.REAL) {
-      opts.package = IOS_BUNDLE_ID;
-      await this.driver.executeScript('mobile: deepLink', [opts]);
-      return;
+      // ios real device case
+      const ADDRESS_BAR = '//XCUIElementTypeTextField[@name="TabBarItemTitle"]';
+      const ADDRESS_FIELD =
+        '//XCUIElementTypeApplication[@name="Safari"]/XCUIElementTypeWindow[3]/XCUIElementTypeOther/XCUIElementTypeOther/XCUIElementTypeOther[1]';
+      const GO = '~Go';
+      await this.driver.activateApp(SAFARI_BUNDLE_ID);
+      await this.click(ADDRESS_BAR);
+      await this.sendKeys(ADDRESS_FIELD, url);
+      await this.click(GO);
+    } else {
+      // ios simulator case
+      await this.driver.navigateTo(url);
     }
 
-    // ios simulator case
-    await this.driver.navigateTo(url);
     try {
       // if it's the first time this is happening, might need to approve the alert
       await this.click('~Open', Wait.SHORT);
