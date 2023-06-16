@@ -81,7 +81,7 @@ export function testHarness({beforeFn, noLaunch = false}: HarnessOpts = {}) {
       debug.log('Deleting session');
       await obj.driver.deleteSession();
       if (IS_HEADSPIN) {
-        const status = this.currentTest?.isPassed ? 'passed' : 'failed';
+        const status = this.currentTest?.isPassed() ? 'passed' : 'failed';
         debug.log(`Reporting ${status} session status to HeadSpin`);
         const reportingUrl = `https://${HEADSPIN_API_TOKEN}@api-dev.headspin.io/v0/perftests/upload`;
         await axios.post(reportingUrl, {status, session_id: sessionId});

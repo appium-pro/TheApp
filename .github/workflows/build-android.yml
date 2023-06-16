@@ -58,19 +58,20 @@ jobs:
           node-version: '18'
 
       - name: NPM Install
-        run: |
-          npm install
+        run: npm install
+
       - name: Build application
-        run: |
-          npm run android-release
+        run: npm run android-release
+
       - name: Upload application to HeadSpin
         run: |
           cp ./android/app/build/outputs/apk/release/app-release.apk ./TheApp.apk
           export APP_ID=$(curl -X POST "https://$HEADSPIN_API_TOKEN@api-dev.headspin.io/v1/app/upload" -F app="@TheApp.apk" | jq -r .app_id)
           echo "APP_ID=$APP_ID" >> "$GITHUB_ENV"
+
       - name: Run Appium Tests
         run: |
           export HEADSPIN_APP_ID="${{ env.APP_ID }}"
           export GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
           export BUILD_ID="$GITHUB_REF_NAME:$GIT_HASH"
-          DEBUG=1 HEADSPIN=1 ANDROID=1 REAL_DEVICE=1 npm test
+          DEBUG=1 HEADSPIN=1 ANDROID=1 REAL_DEVICE=1 npm run test -- --parallel --jobs 3

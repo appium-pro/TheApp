@@ -80,12 +80,10 @@ jobs:
         run: /usr/bin/xcodebuild -version
 
       - name: NPM Install
-        run: |
-          npm install
+        run: npm install
 
       - name: Pod Install
-        run: |
-          cd $PROJECT_DIR && pod install
+        run: cd $PROJECT_DIR && pod install
 
       - name: Build App
         run: |
@@ -128,7 +126,7 @@ jobs:
           export HEADSPIN_APP_ID="${{ env.APP_ID }}"
           export GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
           export BUILD_ID="$GITHUB_REF_NAME:$GIT_HASH"
-          DEBUG=1 HEADSPIN=1 IOS=1 REAL_DEVICE=1 npm test
+          DEBUG=1 HEADSPIN=1 IOS=1 REAL_DEVICE=1 npm run test -- --parallel --jobs 3
 
       - name: Clean Up Keys
         if: ${{ always() }}

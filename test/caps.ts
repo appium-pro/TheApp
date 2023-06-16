@@ -102,14 +102,18 @@ const HEADSPIN_IOS_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...IOS_BASE_CAPS,
   'headspin:selector':
-    'device_type:ios geos:"Palo Alto, US"  device_skus:"iPhone XR"',
+    '(device_type:ios ' +
+    '(geos:"Palo Alto, US",geos:"Mountain View, US",geos:"Sunnyvale, US",geos:"Toronto, CA")) ' +
+    '(device_skus:"iPhone XR",device_skus:"iPhone 11",device_skus:"iPhone 13",device_skus:"iPhone 13 mini",device_skus:"iPhone SE")',
 };
 
 const HEADSPIN_ANDROID_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...ANDROID_BASE_CAPS,
   'headspin:selector':
-    'device_type:android geos:"Palo Alto, US",geos:"Mountain View, US" device_skus:"Pixel 4",device_skus:"Galaxy S23"',
+    '(device_type:android ' +
+    '(geos:"Palo Alto, US",geos:"Mountain View, US",geos:"Sunnyvale, US")) ' +
+    '(device_skus:"Pixel 4",device_skus:"Galaxy S23")',
 };
 
 const LOCAL_BASE_CAPS = {};
