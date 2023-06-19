@@ -102,7 +102,7 @@ const HEADSPIN_IOS_CAPS = {
   ...HEADSPIN_BASE_CAPS,
   ...IOS_BASE_CAPS,
   'headspin:selector':
-    '(device_type:ios ' +
+    '(device_type:ios os_version:>=15 ' +
     '(geos:"Palo Alto, US",geos:"Mountain View, US",geos:"Sunnyvale, US",geos:"Toronto, CA")) ' +
     '(device_skus:"iPhone XR",device_skus:"iPhone 11",device_skus:"iPhone 13",device_skus:"iPhone 13 mini",device_skus:"iPhone SE")',
 };
