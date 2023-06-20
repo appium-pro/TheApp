@@ -23,7 +23,6 @@ export enum ScrollDirection {
 }
 
 export type WaitTimeout = Wait | number;
-
 export type SelectorMap = Record<string, string | ((x: string) => string)>;
 export type StringSelectorMap = Record<string, string>;
 export type FunctionSelectorMap = Record<string, (x: string) => string>;
@@ -60,11 +59,12 @@ export class BaseView {
   }
 
   get #$(): SelectorMap {
+    const s = this.S ?? {};
     if (this.platform === Platform.IOS && this.S_IOS) {
-      return this.S_IOS;
+      return {...this.S_IOS, ...s};
     }
     if (this.platform === Platform.ANDROID && this.S_ANDROID) {
-      return this.S_ANDROID;
+      return {...this.S_ANDROID, ...s};
     }
     if (this.S) {
       return this.S;
@@ -236,7 +236,8 @@ export class BaseView {
         .perform();
     } catch (err) {
       // ignore any android errors here for now since uiauto2 driver does not implement DELETE
-      // /actions, neither do some older versions of the xcuitest driver
+      // /actions, neither do some older versions of the xcuitest driver.
+      // Really we should be more specific about which errors we ignore and which we don't.
     }
   }
 
