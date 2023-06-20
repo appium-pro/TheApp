@@ -5,7 +5,7 @@ Appium automation features. There is also a test suite for the application the d
 Appium testing practices. See the [CI](CI.md) doc for a writeup on the most salient features of the
 test suite and how CI is achieved for this app.
 
-Release versions of TheApp (typicall as `.apk` and `.app.zip` are available at the
+Release versions of TheApp (typically as `.apk` and `.app.zip` are available at the
 [Releases](https://github.com/appium-pro/TheApp/releases) section of this repo.
 
 ## Building locally

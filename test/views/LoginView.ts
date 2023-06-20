@@ -1,22 +1,20 @@
 import {BaseView} from './BaseView';
 import {SecretView} from './SecretView';
 
-const S = {
-  password: '~password',
-  loginBtn: '~loginBtn',
-  username: '~username',
-};
-
 export class LoginView extends BaseView {
+  S = {
+    password: '~password',
+    loginBtn: '~loginBtn',
+    username: '~username',
+  };
+
   S_IOS = {
-    ...S,
     username: '//XCUIElementTypeTextField[@name="username"]',
     alertMsg: '//XCUIElementTypeAlert//*[contains(@name, "Invalid")]',
     alertBtn: '~OK',
   };
 
   S_ANDROID = {
-    ...S,
     alertMsg: '//*[@resource-id="android:id/message"]',
     alertBtn: '//*[@resource-id="android:id/button1"]',
   };

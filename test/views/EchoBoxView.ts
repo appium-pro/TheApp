@@ -2,16 +2,18 @@ import {BaseView} from './BaseView';
 import {HomeView} from './HomeView';
 
 export class EchoBoxView extends BaseView {
-  S_ANDROID = {
+  S = {
     input: '~messageInput',
     save: '~messageSaveBtn',
+  };
+
+  S_ANDROID = {
     savedMsg: '//*[@resource-id="savedMessage"]',
-  } as const;
+  };
 
   S_IOS = {
-    ...this.S_ANDROID,
     savedMsg: '~savedMessage',
-  } as const;
+  };
 
   async setEchoText(text: string) {
     await this.sendKeys(this.$.input, text);
