@@ -2,5 +2,5 @@
 
 module.exports = {
   require: [require.resolve('./test/setup.js')],
-  timeout: process.env.HEADSPIN ? 300000 : 60000,
+  timeout: process.env.HEADSPIN ? 500000 : 60000,
 };
