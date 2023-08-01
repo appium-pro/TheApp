@@ -64,3 +64,5 @@ yarn-error.log
 
 test/headspin*.env
 test/headspin*.sh
+
+/coverage
