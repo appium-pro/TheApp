@@ -1,5 +1,7 @@
 package com.appiumpro.the_app;
 
+import android.widget.Toast;
+
 import com.appiumpro.BuildConfig;
 import com.facebook.react.PackageList;
 import com.reactnativenavigation.NavigationApplication;
@@ -51,11 +53,15 @@ public class MainApplication extends NavigationApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    
+
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
     }
     ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+  }
+
+  public void raiseToast(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
   }
 }
