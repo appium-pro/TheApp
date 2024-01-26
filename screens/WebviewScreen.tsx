@@ -59,7 +59,12 @@ export default function WebviewScreen() {
         }}
         {...testProps('clearBtn')}
       />
-      <WebView style={styles.webview} originWhitelist={['*']} source={source} />
+      <WebView
+        webviewDebuggingEnabled={true}
+        style={styles.webview}
+        originWhitelist={['*']}
+        source={source}
+      />
     </View>
   );
 }
