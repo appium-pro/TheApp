@@ -18,8 +18,16 @@ export default function DualWebviewScreen() {
 
   return (
     <View style={styles.main}>
-      <WebView style={styles.webview} source={source1} />
-      <WebView style={styles.webview} source={source2} />
+      <WebView
+        webviewDebuggingEnabled={true}
+        style={styles.webview}
+        source={source1}
+      />
+      <WebView
+        webviewDebuggingEnabled={true}
+        style={styles.webview}
+        source={source2}
+      />
     </View>
   );
 }
